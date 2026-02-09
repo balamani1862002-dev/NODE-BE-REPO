@@ -40,7 +40,7 @@ export const updateTransaction = async (req: AuthRequest, res: Response, next: N
       }
     });
 
-    const transaction = await Transaction.update(parseInt(id), req.user!.id, updates);
+    const transaction = await Transaction.update(id, req.user!.id, updates);
     
     if (!transaction) {
       res.status(404).json({ error: 'Transaction not found' });
@@ -56,7 +56,7 @@ export const updateTransaction = async (req: AuthRequest, res: Response, next: N
 export const deleteTransaction = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { id } = req.params;
-    const deleted = await Transaction.delete(parseInt(id), req.user!.id);
+    const deleted = await Transaction.delete(id, req.user!.id);
     
     if (!deleted) {
       res.status(404).json({ error: 'Transaction not found' });

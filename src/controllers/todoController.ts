@@ -29,7 +29,7 @@ export const updateTodo = async (req: AuthRequest, res: Response, next: NextFunc
     if (req.body.title !== undefined) updates.title = req.body.title;
     if (req.body.completed !== undefined) updates.completed = req.body.completed;
 
-    const todo = await Todo.update(parseInt(id), req.user!.id, updates);
+    const todo = await Todo.update(id, req.user!.id, updates);
     
     if (!todo) {
       res.status(404).json({ error: 'Todo not found' });
@@ -45,7 +45,7 @@ export const updateTodo = async (req: AuthRequest, res: Response, next: NextFunc
 export const deleteTodo = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { id } = req.params;
-    const deleted = await Todo.delete(parseInt(id), req.user!.id);
+    const deleted = await Todo.delete(id, req.user!.id);
     
     if (!deleted) {
       res.status(404).json({ error: 'Todo not found' });

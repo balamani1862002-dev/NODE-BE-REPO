@@ -6,7 +6,7 @@ class UserModel {
   async create(name: string, email: string, password: string, role: 'user' | 'admin' = 'user'): Promise<UserResponse> {
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query<UserResponse>(
-      'INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id, name, email, role, created_at',
+      'INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id, name, email, role, created_at, modified_at',
       [name, email, hashedPassword, role]
     );
     return result.rows[0];
@@ -17,9 +17,9 @@ class UserModel {
     return result.rows[0];
   }
 
-  async findById(id: number): Promise<UserResponse | undefined> {
+  async findById(id: string): Promise<UserResponse | undefined> {
     const result = await pool.query<UserResponse>(
-      'SELECT id, name, email, role, created_at FROM users WHERE id = $1',
+      'SELECT id, name, email, role, created_at, modified_at FROM users WHERE id = $1',
       [id]
     );
     return result.rows[0];
@@ -27,13 +27,13 @@ class UserModel {
 
   async getAll(): Promise<UserResponse[]> {
     const result = await pool.query<UserResponse>(
-      'SELECT id, name, email, role, created_at FROM users ORDER BY created_at DESC'
+      'SELECT id, name, email, role, created_at, modified_at FROM users ORDER BY created_at DESC'
     );
     return result.rows;
   }
 
-  async delete(id: number): Promise<{ id: number } | undefined> {
-    const result = await pool.query<{ id: number }>('DELETE FROM users WHERE id = $1 RETURNING id', [id]);
+  async delete(id: string): Promise<{ id: string } | undefined> {
+    const result = await pool.query<{ id: string }>('DELETE FROM users WHERE id = $1 RETURNING id', [id]);
     return result.rows[0];
   }
 

@@ -3,7 +3,7 @@ import { Transaction, TransactionType, MonthlyStats, ExpenseByCategory, MostActi
 
 class TransactionModel {
   async create(
-    userId: number,
+    userId: string,
     type: TransactionType,
     category: string,
     amount: number,
@@ -17,7 +17,7 @@ class TransactionModel {
     return result.rows[0];
   }
 
-  async findByUserId(userId: number): Promise<Transaction[]> {
+  async findByUserId(userId: string): Promise<Transaction[]> {
     const result = await pool.query<Transaction>(
       'SELECT * FROM transactions WHERE user_id = $1 ORDER BY date DESC, created_at DESC',
       [userId]
@@ -25,7 +25,7 @@ class TransactionModel {
     return result.rows;
   }
 
-  async findById(id: number, userId: number): Promise<Transaction | undefined> {
+  async findById(id: string, userId: string): Promise<Transaction | undefined> {
     const result = await pool.query<Transaction>(
       'SELECT * FROM transactions WHERE id = $1 AND user_id = $2',
       [id, userId]
@@ -34,8 +34,8 @@ class TransactionModel {
   }
 
   async update(
-    id: number,
-    userId: number,
+    id: string,
+    userId: string,
     updates: {
       type?: TransactionType;
       category?: string;
@@ -61,6 +61,9 @@ class TransactionModel {
       throw new Error('No fields to update');
     }
 
+    // Add modified_at update
+    fields.push(`modified_at = now()`);
+
     values.push(id, userId);
     const result = await pool.query<Transaction>(
       `UPDATE transactions SET ${fields.join(', ')} WHERE id = $${paramCount} AND user_id = $${paramCount + 1} RETURNING *`,
@@ -69,15 +72,15 @@ class TransactionModel {
     return result.rows[0];
   }
 
-  async delete(id: number, userId: number): Promise<{ id: number } | undefined> {
-    const result = await pool.query<{ id: number }>(
+  async delete(id: string, userId: string): Promise<{ id: string } | undefined> {
+    const result = await pool.query<{ id: string }>(
       'DELETE FROM transactions WHERE id = $1 AND user_id = $2 RETURNING id',
       [id, userId]
     );
     return result.rows[0];
   }
 
-  async getMonthlyStats(userId: number, year: number, month: number): Promise<MonthlyStats[]> {
+  async getMonthlyStats(userId: string, year: number, month: number): Promise<MonthlyStats[]> {
     const result = await pool.query<MonthlyStats>(
       `SELECT 
         type,
@@ -92,7 +95,7 @@ class TransactionModel {
     return result.rows;
   }
 
-  async getExpensesByCategory(userId: number, year: number, month: number): Promise<ExpenseByCategory[]> {
+  async getExpensesByCategory(userId: string, year: number, month: number): Promise<ExpenseByCategory[]> {
     const result = await pool.query<ExpenseByCategory>(
       `SELECT 
         category,

@@ -16,12 +16,12 @@ export const deleteUser = async (req: AuthRequest, res: Response, next: NextFunc
   try {
     const { id } = req.params;
 
-    if (parseInt(id) === req.user!.id) {
+    if (id === req.user!.id) {
       res.status(400).json({ error: 'Cannot delete your own account' });
       return;
     }
 
-    const deleted = await User.delete(parseInt(id));
+    const deleted = await User.delete(id);
     
     if (!deleted) {
       res.status(404).json({ error: 'User not found' });

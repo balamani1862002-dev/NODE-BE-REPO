@@ -1,45 +1,49 @@
 import { Request } from 'express';
 
 export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
   password: string;
   role: 'user' | 'admin';
   created_at: Date;
+  modified_at: Date;
 }
 
 export interface UserResponse {
-  id: number;
+  id: string;
   name: string;
   email: string;
   role: 'user' | 'admin';
   created_at: Date;
+  modified_at: Date;
 }
 
 export interface Todo {
-  id: number;
-  user_id: number;
+  id: string;
+  user_id: string;
   title: string;
   completed: boolean;
   created_at: Date;
+  modified_at: Date;
 }
 
 export type TransactionType = 'income' | 'expense' | 'loan_given' | 'loan_taken' | 'savings';
 
 export interface Transaction {
-  id: number;
-  user_id: number;
+  id: string;
+  user_id: string;
   type: TransactionType;
   category: string;
   amount: number;
   note: string | null;
   date: Date;
   created_at: Date;
+  modified_at: Date;
 }
 
 export interface JWTPayload {
-  id: number;
+  id: string;
   email: string;
   role: 'user' | 'admin';
 }
@@ -95,7 +99,7 @@ export interface ExpenseByCategory {
 }
 
 export interface MostActiveUser {
-  id: number;
+  id: string;
   name: string;
   email: string;
   transaction_count: string;
